@@ -12,8 +12,15 @@ client = TestClient(app)
 # -----------------------------
 def test_root():
     response = client.get("/")
+    data = response.json()
+
     assert response.status_code == 200
-    assert response.json() == {"message": "Hello FastAPI"}
+    assert data["message"] == "Hello FastAPI 🚀"
+
+    # check additional fields exist (not full equality)
+    assert "timestamp" in data
+    assert "system" in data
+    assert data["app_mode"] == "development"
     
 
 # -----------------------------
