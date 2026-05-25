@@ -1,3 +1,3 @@
-# FastAPI Git Practice
+# Minimal Web App
 
-A minimal FastAPI project for practicing Git operations.
+A minimal FastAPI web app for practicing Git operations.
