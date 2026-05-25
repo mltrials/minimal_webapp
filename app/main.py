@@ -7,11 +7,20 @@ from fastapi import (
     Path,
     Body,
 )
+from datetime import datetime
+import platform
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional, List
 
 app = FastAPI(title="Minimal FastAPI App", version="1.0.0")
+
+
+# -----------------------------
+# Dependency (reusable config)
+# -----------------------------
+def get_app_mode():
+    return {"mode": "development"}
 
 
 # -----------------------------
@@ -49,8 +58,31 @@ def common_params(
 # Root endpoint
 # -----------------------------
 @app.get("/")
-def root():
-    return {"message": "Hello FastAPI"}
+def root(
+    user: str = Query(None, description="Optional username"),
+    debug: bool = Query(False),
+    mode: dict = Depends(get_app_mode),
+):
+    response = {
+        "message": "Hello FastAPI 🚀",
+        "timestamp": datetime.utcnow().isoformat(),
+        "system": {
+            "python_version": platform.python_version(),
+            "platform": platform.system(),
+        },
+        "app_mode": mode["mode"],
+    }
+
+    if user:
+        response["greeting"] = f"Welcome, {user}!"
+
+    if debug:
+        response["debug_info"] = {
+            "active_endpoints": ["/", "/items", "/log"],
+            "status": "debug mode enabled",
+        }
+
+    return response
 
 
 # -----------------------------
